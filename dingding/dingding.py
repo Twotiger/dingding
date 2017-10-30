@@ -12,15 +12,15 @@ class DingDing(object):
         self.url = 'https://oapi.dingtalk.com/robot/send?access_token=%s' % token
         self.headers = {'Content-Type': 'application/json'}
 
-    def send_text(self, text, mobiles=[], at_all=False):
+    def send_text(self, text, at_mobiles=[], at_all=False):
         """
         例子: send_text('天气不错', ['13333333333'])
         :param text: 消息类型，此时固定为:text
-        :param mobiles: 被@人的手机号 ['13333333333', ]
+        :param at_mobiles: 被@人的手机号 ['13333333333', ]
         :param at_all: @所有人时:true,否则为:false
         :return: 
         """
-        self._send_text(text, mobiles, at_all)
+        self._send_text(text, at_mobiles, at_all)
 
     def send_link(self, title, text, message_url='', pic_url=''):
         self._send_link(title, text, message_url, pic_url)
@@ -30,7 +30,7 @@ class DingDing(object):
 
         :param title: 首屏会话透出的展示内容
         :param text: markdown格式的消息
-        :param mobiles: 被@人的手机号(在text内容里要有@手机号)
+        :param at_mobiles: 被@人的手机号(在text内容里要有@手机号)
         :param at_all: @所有人时:true,否则为:false
         :return: 
         """
@@ -122,14 +122,14 @@ class DingDing(object):
         }
         return self._post(data)
 
-    def _send_text(self, text, mobiles, at_all):
+    def _send_text(self, text, at_mobiles, at_all):
         data = {
             "msgtype": "text",
             "text": {
                 "content": text
             },
             "at": {
-                "atMobiles": mobiles,
+                "atMobiles": at_mobiles,
                 "isAtAll": at_all
             }
         }
