@@ -87,7 +87,7 @@ class DingDing(object):
                 "title": title,
                 "text": text,
                 "hideAvatar": hide_avatar,
-                "btnOrientation": btn_orientationz,
+                "btnOrientation": btn_orientation,
                 "btns": btns
             },
             "msgtype": "actionCard"
