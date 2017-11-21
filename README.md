@@ -35,7 +35,7 @@ ding.send_link('时代的火车向前开', '这个即将发布的新版本，创
 ![](https://img.alicdn.com/tfs/TB1VfZtaUgQMeJjy0FeXXXOEVXa-498-193.png)
 
 ```
-send_feed_card([('学vue','https://cn.vuejs.org/','https://cn.vuejs.org/images/logo.png'),
+ding.send_feed_card([('学vue','https://cn.vuejs.org/','https://cn.vuejs.org/images/logo.png'),
                      ('哪家强', 'https://cn.vuejs.org/', 'https://cn.vuejs.org/images/logo.png')])
 ```
 ![](http://ozrgxic3l.bkt.clouddn.com/TIM%E5%9B%BE%E7%89%8720171121171532.jpg)
