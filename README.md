@@ -1,3 +1,8 @@
+# 在线安装
+
+`pip install git+https://github.com/Twotiger/dingding.git`
+
+# 例子
 ```
 from dingding import DingDing
 access_token="xxxxxxxxxxxxxxxxxxxxxxxxxx"
