@@ -8,7 +8,7 @@ from dingding import DingDing
 access_token="xxxxxxxxxxxxxxxxxxxxxxxxxx"
 ding = DingDing(access_token)
 # @所有人
-ding.send_text('hello', all_all=True)
+ding.send_text('hello', at_all=True)
 
 # @手机号为1333333333的人
 ding.send_text('hello', ['13333333333'])
