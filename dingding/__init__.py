@@ -1,2 +1,3 @@
 # -*- coding: utf-8 -*-
-from dingding import DingDing
+from __future__ import absolute_import
+from .dingding import DingDing
