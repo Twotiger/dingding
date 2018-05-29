@@ -39,3 +39,11 @@ ding.send_feed_card([('学vue','https://cn.vuejs.org/','https://cn.vuejs.org/ima
                      ('哪家强', 'https://cn.vuejs.org/', 'https://cn.vuejs.org/images/logo.png')])
 ```
 ![](http://ozrgxic3l.bkt.clouddn.com/TIM%E5%9B%BE%E7%89%8720171121171532.jpg)
+
+
+## 返回结果
+
+如果发送正常
+```
+{'errcode': 0, 'errmsg': 'ok'}
+```

@@ -153,4 +153,4 @@ class DingDing(object):
         req = Request(self.url, data=data.encode('utf-8'), headers=self.headers)
         response = urlopen(req)
         the_page = response.read()
-        return the_page.decode('utf-8')
+        return json.loads(the_page.decode('utf-8'))
