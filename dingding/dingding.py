@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 
+SHOW_AVATAR = "0"  # 不隐藏头像
+HIDE_AVATAR = "1"  # 隐藏头像
+
+
+BTN_CROSSWISE = "0"  # 横向
+BTN_LENGTHWAYS = "1"  # 纵向
+
+
 try:
     from urllib2 import urlopen, Request
 except:
@@ -8,10 +16,24 @@ except:
 
 
 class DingDing(object):
-
     def __init__(self, token):
-        self.url = 'https://oapi.dingtalk.com/robot/send?access_token=%s' % token
-        self.headers = {'Content-Type': 'application/json'}
+        self.url = self.parse_token(token)
+        self.headers = {"Content-Type": "application/json"}
+
+    def parse_token(self, token: str):
+        """
+        :param token:
+        :return:
+        """
+        ding_url_pre = "https://oapi.dingtalk.com/robot/send?access_token=%s"
+        token = token.strip()
+        if len(token) == 64:
+            return ding_url_pre % token
+
+        if len(token) == 114:
+            return token
+
+        raise ValueError("token Error")
 
     def send_text(self, text, at_mobiles=[], at_all=False):
         """
@@ -21,10 +43,24 @@ class DingDing(object):
         :param at_all: @所有人时:true,否则为:false
         :return:
         """
-        return self._send_text(text, at_mobiles, at_all)
+        data = {
+            "msgtype": "text",
+            "text": {"content": text},
+            "at": {"atMobiles": at_mobiles, "isAtAll": at_all},
+        }
+        return self._post(data)
 
-    def send_link(self, title, text, message_url='', pic_url=''):
-        return self._send_link(title, text, message_url, pic_url)
+    def send_link(self, title, text, message_url="", pic_url=""):
+        data = {
+            "msgtype": "link",
+            "link": {
+                "text": text,
+                "title": title,
+                "picUrl": pic_url,
+                "messageUrl": message_url,
+            },
+        }
+        return self._post(data)
 
     def send_markdown(self, title, text, at_mobiles=[], at_all=False):
         """发送markdown格式
@@ -35,9 +71,22 @@ class DingDing(object):
         :param at_all: @所有人时:true,否则为:false
         :return:
         """
-        return self._send_markdown(title, text, at_mobiles, at_all)
+        data = {
+            "msgtype": "markdown",
+            "markdown": {"title": title, "text": text},
+            "at": {"atMobiles": at_mobiles, "isAtAll": at_all},
+        }
+        return self._post(data)
 
-    def send_single_action_card(self, title, text, single_title, single_url, btn_orientation='0', hide_avatar='0'):
+    def send_single_action_card(
+        self,
+        title,
+        text,
+        single_title,
+        single_url,
+        btn_orientation=BTN_LENGTHWAYS,
+        hide_avatar=SHOW_AVATAR,
+    ):
         """整体跳转ActionCard类型
 
         :param title: 首屏会话透出的展示内容
@@ -48,9 +97,22 @@ class DingDing(object):
         :param hide_avatar: 0-正常发消息者头像,1-隐藏发消息者头像
         :return:
         """
-        return self._send_single_action_card(title, text, single_title, single_url, btn_orientation, hide_avatar)
+        data = {
+            "actionCard": {
+                "title": title,
+                "text": text,
+                "hideAvatar": hide_avatar,
+                "btnOrientation": btn_orientation,
+                "singleTitle": single_title,
+                "singleURL": single_url,
+            },
+            "msgtype": "actionCard",
+        }
+        return self._post(data)
 
-    def send_action_card(self, title, text, btns, btn_orientation='0', hide_avatar='0'):
+    def send_action_card(
+        self, title, text, btns, btn_orientation=BTN_LENGTHWAYS, hide_avatar=SHOW_AVATAR
+    ):
         """独立跳转ActionCard类型
 
         :param title: 首屏会话透出的展示内容
@@ -60,7 +122,18 @@ class DingDing(object):
         :param hide_avatar: 0-正常发消息者头像,1-隐藏发消息者头像
         :return:
         """
-        return self._send_action_card(title, text, btns, btn_orientation, hide_avatar)
+        btns = [{"title": btn[0], "actionURL": btn[1]} for btn in btns]
+        data = {
+            "actionCard": {
+                "title": title,
+                "text": text,
+                "hideAvatar": hide_avatar,
+                "btnOrientation": btn_orientation,
+                "btns": btns,
+            },
+            "msgtype": "actionCard",
+        }
+        return self._post(data)
 
     def send_feed_card(self, rows):
         """FeedCard类型
@@ -69,88 +142,15 @@ class DingDing(object):
         :param rows: [(title, messageURL, picURL), (...)]
         :return:
         """
-        return self._send_feed_card(rows)
-
-    def _send_feed_card(self, rows):
-        rows = [{'title': row[0], 'messageURL': row[1], 'picURL': row[2]} for row in rows]
-        data = {
-            'feedCard': {
-                'links': rows
-            },
-            'msgtype': 'feedCard'
-        }
-        return self._post(data)
-
-    def _send_action_card(self, title, text, btns, btn_orientation, hide_avatar):
-        btns = [{'title': btn[0], 'actionURL': btn[1]} for btn in btns]
-        data = {
-            "actionCard": {
-                "title": title,
-                "text": text,
-                "hideAvatar": hide_avatar,
-                "btnOrientation": btn_orientation,
-                "btns": btns
-            },
-            "msgtype": "actionCard"
-        }
-        return self._post(data)
-
-    def _send_single_action_card(self, title, text, single_title, single_url, btn_orientation, hide_avatar):
-        data = {
-            "actionCard": {
-                "title": title,
-                "text": text,
-                "hideAvatar": hide_avatar,
-                "btnOrientation": btn_orientation,
-                "singleTitle": single_title,
-                "singleURL": single_url
-            },
-            "msgtype": "actionCard"
-        }
-        return self._post(data)
-
-    def _send_markdown(self, title, text, at_mobiles, at_all):
-        data = {
-            "msgtype": "markdown",
-            "markdown": {
-                "title": title,
-                "text": text
-            },
-            "at": {
-                "atMobiles": at_mobiles,
-                "isAtAll": at_all
-            }
-        }
-        return self._post(data)
-
-    def _send_text(self, text, at_mobiles, at_all):
-        data = {
-            "msgtype": "text",
-            "text": {
-                "content": text
-            },
-            "at": {
-                "atMobiles": at_mobiles,
-                "isAtAll": at_all
-            }
-        }
-        return self._post(data)
-
-    def _send_link(self, title, text, message_url, pic_url):
-        data = {
-            "msgtype": "link",
-            "link": {
-                "text": text,
-                "title": title,
-                "picUrl": pic_url,
-                "messageUrl": message_url
-            }
-        }
+        rows = [
+            {"title": row[0], "messageURL": row[1], "picURL": row[2]} for row in rows
+        ]
+        data = {"feedCard": {"links": rows}, "msgtype": "feedCard"}
         return self._post(data)
 
     def _post(self, data):
         data = json.dumps(data)
-        req = Request(self.url, data=data.encode('utf-8'), headers=self.headers)
+        req = Request(self.url, data=data.encode("utf-8"), headers=self.headers)
         response = urlopen(req)
         the_page = response.read()
-        return json.loads(the_page.decode('utf-8'))
+        return json.loads(the_page.decode("utf-8"))
