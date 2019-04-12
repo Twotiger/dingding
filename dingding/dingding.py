@@ -20,7 +20,7 @@ class DingDing(object):
         self.url = self.parse_token(token)
         self.headers = {"Content-Type": "application/json"}
 
-    def parse_token(self, token: str):
+    def parse_token(self, token):
         """
         :param token:
         :return:
