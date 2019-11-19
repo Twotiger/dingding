@@ -1,24 +1,34 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
+import time
+import hmac
+import hashlib
+import base64
+
+if sys.version_info > (3, 0):
+    from urllib.request import urlopen, Request
+    from urllib.parse import quote_plus
+else:
+    from urllib2 import urlopen, Request
+    from urllib import quote_plus
 
 SHOW_AVATAR = "0"  # 不隐藏头像
 HIDE_AVATAR = "1"  # 隐藏头像
 
-
 BTN_CROSSWISE = "0"  # 横向
 BTN_LENGTHWAYS = "1"  # 纵向
-
-
-try:
-    from urllib2 import urlopen, Request
-except:
-    from urllib.request import urlopen, Request
 
 
 class DingDing(object):
     def __init__(self, token):
         self.url = self.parse_token(token)
         self.headers = {"Content-Type": "application/json"}
+
+    def set_secret(self, secret):
+        """设置签名秘钥
+        """
+        self.secret = secret
 
     def parse_token(self, token):
         """
@@ -149,8 +159,24 @@ class DingDing(object):
         return self._post(data)
 
     def _post(self, data):
+
+        if self.secret:
+            sign, timestamp = self.get_sign_timestamp()
+            self.url = self.url + "&sign=" + sign + "&timestamp=" + timestamp
+
         data = json.dumps(data)
         req = Request(self.url, data=data.encode("utf-8"), headers=self.headers)
         response = urlopen(req)
         the_page = response.read()
         return json.loads(the_page.decode("utf-8"))
+
+    def get_sign_timestamp(self):
+        timestamp = "%d" % (round(time.time() * 1000))
+        secret_enc = self.secret.encode("utf-8")
+        string_to_sign = "{}\n{}".format(timestamp, self.secret)
+        string_to_sign_enc = string_to_sign.encode("utf-8")
+        hmac_code = hmac.new(
+            secret_enc, string_to_sign_enc, digestmod=hashlib.sha256
+        ).digest()
+        sign = quote_plus(base64.b64encode(hmac_code))
+        return sign, timestamp

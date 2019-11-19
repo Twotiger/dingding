@@ -41,6 +41,17 @@ ding.send_feed_card([('学vue','https://cn.vuejs.org/','https://cn.vuejs.org/ima
 ![](http://ozrgxic3l.bkt.clouddn.com/TIM%E5%9B%BE%E7%89%8720171121171532.jpg)
 
 
+## 添加签名秘钥
+
+```python
+d = DingDing(
+    "https://oapi.dingtalk.com/robot/send?access_token=tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+)
+# 如果使用了签名秘钥,需要添加下面这条语句
+d.set_secret("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+d.send_text("hello")
+```
+
 ## 返回结果
 
 如果发送正常
