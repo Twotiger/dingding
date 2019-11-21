@@ -24,6 +24,7 @@ class DingDing(object):
     def __init__(self, token):
         self.url = self.parse_token(token)
         self.headers = {"Content-Type": "application/json"}
+        self.secret = ""
 
     def set_secret(self, secret):
         """设置签名秘钥

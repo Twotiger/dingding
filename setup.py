@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dingding",
-    version="0.6",
+    version="0.6.1",
     author="Twotiger",
     author_email="dgl0518@gmail.com",
     description="ding ding robot",
