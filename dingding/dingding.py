@@ -160,13 +160,13 @@ class DingDing(object):
         return self._post(data)
 
     def _post(self, data):
-
+        url = self.url
         if self.secret:
             sign, timestamp = self.get_sign_timestamp()
-            self.url = self.url + "&sign=" + sign + "&timestamp=" + timestamp
+            url = url + "&sign=" + sign + "&timestamp=" + timestamp
 
         data = json.dumps(data)
-        req = Request(self.url, data=data.encode("utf-8"), headers=self.headers)
+        req = Request(url, data=data.encode("utf-8"), headers=self.headers)
         response = urlopen(req)
         the_page = response.read()
         return json.loads(the_page.decode("utf-8"))
